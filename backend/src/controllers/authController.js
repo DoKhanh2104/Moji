@@ -2,6 +2,8 @@ import bcrypt from 'bcrypt';
 import User from '../models/User.js'
 import jwt from 'jsonwebtoken'
 import Session from '../models/Session.js';
+import crypto from 'crypto';
+
 
 const ACCESS_TOKEN_TTL = '30m';
 const REFRESH_TOKEN_TTL = 14 * 24 * 60 * 60 * 1000;
@@ -83,15 +85,38 @@ export const signIn = async (req, res) => {
         res.cookie('refreshToken', refreshToken, {
             httpOnly: true,
             secure: true, //ko cho truy cap bang js
-            samSite: none,
+            samSite: 'none',
             maxAge: REFRESH_TOKEN_TTL,
         })
 
         //save access token into res
-        return res.status(200).json({ mess: `User ${user.displayName} đã log in !!!` })
+        return res.status(200).json({ mess: `User ${user.displayName} đã log in !!!`, accessToken });
 
     } catch (error) {
         console.error("Lỗi khi gọi sign in", error);
         return res.status(500).json({ mess: "Lỗi hệ thống" })
+    }
+}
+
+// sign out 
+export const signOut = async (req, res) => {
+    try {
+        // lấy rft từ cookie
+        const token = req.cookies?.refreshToken;
+
+        if (token) {
+            // xóa rft trong session
+            await Session.deleteOne({ refreshToken: token });
+
+            //xóa cookie
+            res.clearCookie("refreshToken");
+        }
+
+        return res.sendStatus(204);
+
+
+    } catch (error) {
+        console.error("Lỗi khi sign out", error);
+        return res.status(500).json({ mess: "Lỗi hệ thống" });
     }
 }
