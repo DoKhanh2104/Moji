@@ -1,8 +1,8 @@
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
-import { Input } from "./ui/input"
-import { Label } from "./ui/label"
+import { Input } from "../ui/input"
+import { Label } from "../ui/label"
 import { z } from "zod"
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
