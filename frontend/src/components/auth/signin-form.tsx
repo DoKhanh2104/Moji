@@ -6,6 +6,8 @@ import { Label } from "../ui/label"
 import { z } from "zod"
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import { useAuthStore } from "@/stores/useAuthStore"
+import { useNavigate } from "react-router"
 
 const signInSchema = z.object({
     username: z.string().min(3, "Username is required"),
@@ -20,13 +22,17 @@ export function SigninForm({
     ...props
 }: React.ComponentProps<"div">) {
 
+    const { signIn } = useAuthStore()
+    const navigate = useNavigate()
+
     const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<SignInFormValue>({
         resolver: zodResolver(signInSchema),
 
     });
     const onSubmit = async (data: SignInFormValue) => {
-        //call api from backend
-
+        const { username, password } = data
+        await signIn(username, password)
+        navigate('/')
     }
 
     return (

@@ -5,5 +5,15 @@ export const authService = {
         const res = await api.post('/auth/signup', { username, password, email, lastName, firstName }, { withCredentials: true });
 
         return res.data;
+    },
+
+    signIn: async (username: string, password: string) => {
+        const res = await api.post('/auth/signin', { username, password }, { withCredentials: true })
+
+        return res.data; // tra access token
+    },
+
+    signOut: async () => {
+        return await api.post('/auth/signout', {}, { withCredentials: true });
     }
 }

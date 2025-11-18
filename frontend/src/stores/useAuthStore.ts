@@ -9,6 +9,10 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     user: null,
     loading: false,
 
+    clearState: () => {
+        set({ accessToken: null, user: null, loading: false });
+    },
+
     signUp: async (username, password, email, lastName, firstName) => {
         try {
             set({ loading: true })
@@ -22,6 +26,31 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         } finally {
             set({ loading: false })
 
+        }
+    },
+
+    signIn: async (username, password) => {
+        try {
+            set({ loading: true })
+
+            const { accessToken } = await authService.signIn(username, password)
+            set({ accessToken })
+
+            toast.success("Welcome you back to Moji 🔥")
+        } catch (error) {
+            console.error(error)
+            toast.error("Login failed")
+        }
+    },
+
+    signOut: async () => {
+        try {
+            get().clearState();
+            await authService.signOut();
+            toast.success("Signout success");
+        } catch (error) {
+            console.error(error);
+            toast.error("Signout failed");
         }
     }
 }));
